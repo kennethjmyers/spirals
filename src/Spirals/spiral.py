@@ -25,7 +25,7 @@ def stack_images(arr1: np.ndarray, arr2: np.ndarray, flip_second=True):
 
 
 def ignore_alpha(arr: np.ndarray):
-    return arr[:, :, 3]
+    return arr[:, :, :3]
 
 
 def func_apply_to_halves(
@@ -129,7 +129,7 @@ def min_of_all_channels_halves(arr: np.ndarray):
     """
     return func_apply_to_halves(
         arr,
-        preprocessing_func=lambda x, y: np.append(x[:, :, :3], np.flip(y[:, :, :3], axis=1), axis=2),
+        preprocessing_func=lambda x, y: np.append(ignore_alpha(x), np.flip(ignore_alpha(y), axis=1), axis=2),
         func=lambda x: np.min(x, axis=2),
         postprocessing_func=lambda x: np.repeat(x.reshape(*x.shape, 1), 3, axis=2)
     )
@@ -144,7 +144,7 @@ def max_of_all_channels_halves(arr: np.ndarray):
     """
     return func_apply_to_halves(
         arr,
-        preprocessing_func=lambda x,y: np.append(x[:, :, :3], np.flip(y[:, :, :3], axis=1), axis=2),
+        preprocessing_func=lambda x,y: np.append(ignore_alpha(x), np.flip(ignore_alpha(y), axis=1), axis=2),
         func=lambda x: np.max(x, axis=2),
         postprocessing_func= lambda x: np.repeat(x.reshape(*x.shape,1), 3, axis=2)
     )
@@ -175,7 +175,7 @@ if __name__=="__main__":
 
     funcs = [mirror_right_over_left, mirror_left_over_right, flip_horizontal, average_halves, average_halves_glitched,
      sum_halves, min_of_all_channels_halves, min_halves, max_of_all_channels_halves, max_halves]
-    # funcs = [mirror_right_over_left]
+    # funcs = [min_of_all_channels_halves]
 
     for func in funcs:
         print(f"applying function {func.__name__}")
