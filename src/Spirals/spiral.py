@@ -1,13 +1,13 @@
 import skimage
 import os
-import numpy
+import numpy as np
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def mirror_right_over_left(arr: numpy.ndarray):
+def mirror_right_over_left(arr: np.ndarray):
     """
     Mirrors the right half over the left half
     came across this by accident while trying to flip horizontal
@@ -23,7 +23,7 @@ def mirror_right_over_left(arr: numpy.ndarray):
     return arr
 
 
-def mirror_left_over_right(arr: numpy.ndarray):
+def mirror_left_over_right(arr: np.ndarray):
     """
     Mirrors the left half over the right half
     :param arr:
@@ -37,7 +37,7 @@ def mirror_left_over_right(arr: numpy.ndarray):
     return arr
 
 
-def flip_horizontal(arr: numpy.ndarray):
+def flip_horizontal(arr: np.ndarray):
     """
     Flips the image horizontally
     :param arr:
@@ -50,12 +50,35 @@ def flip_horizontal(arr: numpy.ndarray):
             arr[i][j], arr[i][w-j-1] = arr[i][w-j-1], arr[i][j].copy()  # copy is key here
     return arr
 
+
+def average_halves(arr: np.ndarray):
+    new_arr = arr.copy()  # prevents overwriting the original object passed
+    h, w, c = new_arr.shape
+    for i in range(h):
+        for j in range(w):
+            opp_index = w - j - 1
+            value_to_insert = np.mean(np.append(arr[i][j].reshape(1,4),arr[i][opp_index].reshape(1,4), axis=0), axis=0)
+            new_arr[i][j] = value_to_insert
+    return new_arr
+
+
+def max_halves(arr: np.ndarray):
+    new_arr = arr.copy()  # prevents overwriting the original object passed
+    h, w, c = new_arr.shape
+    for i in range(h):
+        for j in range(w):
+            opp_index = w - j - 1
+            value_to_insert = np.max(np.append(arr[i][j].reshape(1,4),arr[i][opp_index].reshape(1,4), axis=0), axis=0)
+            new_arr[i][j] = value_to_insert
+    return new_arr
+
+
 if __name__=="__main__":
     test_image_prefix = "test001"
     test_image_path = os.path.join(THIS_DIR, f'test_images/{test_image_prefix}.png')
     image_arr = skimage.io.imread(test_image_path)
 
-    for func in [mirror_right_over_left, mirror_left_over_right, flip_horizontal]:
+    for func in [mirror_right_over_left, mirror_left_over_right, flip_horizontal, average_halves, max_halves]:
         new_image_arr = func(image_arr)
 
         # display image
