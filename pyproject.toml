@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+# see https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+[project]
+name = "Spirals"
+
+dynamic = ["version"]
+
+dependencies = [
+    "pre-commit==2.21.0",
+    "pytest==7.3.1",
+    "pytest-cov==4.0.0",
+]
+
+requires-python = "== 3.12.3"
+
+authors = [
+  {name = "Kenneth Myers", email = "myers.kenneth.james@gmail.com"},
+]
+
+description = "This project is gonna do something 🌀"
+
+readme = "README.md"
+
+
+
+
