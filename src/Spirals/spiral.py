@@ -5,6 +5,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from typing import Callable
 
+
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -61,19 +62,22 @@ def stack_pixels(arr1: np.ndarray, arr2: np.ndarray):
     """
     assert arr1.shape == arr2.shape
     n = arr1.shape[0]
-    return np.append(arr1, arr2).reshape(2,n)
+    return np.append(arr1, arr2).reshape(2, *arr1.shape)
 
 
-def func_apply_to_halves(arr: np.ndarray, func: Callable, preprocessing_func=stack_pixels):
-    new_arr = arr.copy()  # prevents overwriting the original object passed
-    h, w, c = new_arr.shape
-    for i in range(h):
-        for j in range(w):
-            opp_index = w - j - 1
-            arr1 = arr[i][j]
-            arr2 = arr[i][opp_index]
-            value_to_insert = func(preprocessing_func(arr1, arr2))
-            new_arr[i][j] = value_to_insert
+def func_apply_to_halves(arr: np.ndarray, preprocessing_func=stack_pixels, func: Callable = lambda x:x, postprocessing_func= lambda x:x):
+    h, w, c = arr.shape
+
+    left_half_idx_end = (w//2)+1
+    right_half_idx_start = -left_half_idx_end
+
+    left_half = arr.copy()[:, :left_half_idx_end, :]
+    right_half = np.flip(arr.copy()[:, right_half_idx_start:, :], axis=1)
+    preproc_arr = preprocessing_func(left_half, right_half)
+    func_applied_arr = func(preproc_arr)
+    postproc_arr = postprocessing_func(func_applied_arr)
+    new_arr = np.append(postproc_arr, np.flip(postproc_arr[:, :, :], axis=1), axis=1)
+
     return new_arr
 
 
@@ -113,7 +117,12 @@ def min_of_all_channels_halves(arr: np.ndarray):
     :param arr:
     :return:
     """
-    return func_apply_to_halves(arr, func=np.min)
+    return func_apply_to_halves(
+        arr,
+        preprocessing_func=lambda x, y: np.append(x[:, :, :3], y[:, :, :3], axis=2),
+        func=lambda x: np.min(x, axis=2),
+        postprocessing_func=lambda x: np.repeat(x.reshape(*x.shape, 1), 3, axis=2)
+    )
 
 
 def max_of_all_channels_halves(arr: np.ndarray):
@@ -123,7 +132,12 @@ def max_of_all_channels_halves(arr: np.ndarray):
     :param arr:
     :return:
     """
-    return func_apply_to_halves(arr, func=lambda x: np.max(x[:, :3]))
+    return func_apply_to_halves(
+        arr,
+        preprocessing_func=lambda x,y: np.append(x[:, :, :3], y[:, :, :3], axis=2),
+        func=lambda x: np.max(x, axis=2),
+        postprocessing_func= lambda x: np.repeat(x.reshape(*x.shape,1), 3, axis=2)
+    )
 
 
 def min_halves(arr: np.ndarray):
@@ -151,9 +165,10 @@ if __name__=="__main__":
 
     funcs = [mirror_right_over_left, mirror_left_over_right, flip_horizontal, average_halves, average_halves_glitched,
      sum_halves, min_of_all_channels_halves, min_halves, max_of_all_channels_halves, max_halves]
-    # funcs = [max_of_all_channels_halves]
+    # funcs = [max_halves]
 
     for func in funcs:
+        print(f"applying function {func.__name__}")
         new_image_arr = func(image_arr)
 
         # display image
