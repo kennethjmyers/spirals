@@ -9,7 +9,9 @@ name = "Spirals"
 dynamic = ["version"]
 
 dependencies = [
+    "kaleido==0.2.1",
     "matplotlib==3.9.0",
+    "plotly==5.22.0"
     "pre-commit==2.21.0",
     "pytest==7.3.1",
     "pytest-cov==4.0.0",

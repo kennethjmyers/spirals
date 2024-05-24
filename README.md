@@ -7,3 +7,19 @@ Not really sure what this project is going to be yet.
 3. `python -m venv venv`
 4. `source ./venv/bin/activate`
 5. `pip install -e ."[dev]"`
+
+# Functions
+
+## Other functions
+
+### mirror_right_over_left
+
+![test001_mirror_right_over_left.png](src/Spirals/output_images/test001_mirror_right_over_left.png)
+
+### mirror_left_over_right
+
+![test001_mirror_left_over_right.png](src/Spirals/output_images/test001_mirror_left_over_right.png)
+
+### flip_horizontal
+
+![test001_flip_horizontal.png](src/Spirals/output_images/test001_flip_horizontal.png)
