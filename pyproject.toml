@@ -9,6 +9,7 @@ name = "Spirals"
 dynamic = ["version"]
 
 dependencies = [
+    "matplotlib==3.9.0",
     "pre-commit==2.21.0",
     "pytest==7.3.1",
     "pytest-cov==4.0.0",
