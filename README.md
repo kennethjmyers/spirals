@@ -27,3 +27,31 @@ Not really sure what this project is going to be yet.
 ### flip_horizontal
 
 ![test001_flip_horizontal.png](src/Spirals/output_images/test001_flip_horizontal.png)
+
+### average_halves
+
+![test001_average_halves.png](src/Spirals/output_images/test001_average_halves.png)
+
+### average_halves_glitched
+
+![test001_average_halves_glitched.png](src/Spirals/output_images/test001_average_halves_glitched.png)
+
+### sum_halves
+
+![test001_sum_halves.png](src/Spirals/output_images/test001_sum_halves.png)
+
+### min_of_all_channels_halves
+
+![test001_min_of_all_channels_halves.png](src/Spirals/output_images/test001_min_of_all_channels_halves.png)
+
+### max_of_all_channels_halves
+
+![test001_max_of_all_channels_halves.png](src/Spirals/output_images/test001_max_of_all_channels_halves.png)
+
+### min_halves
+
+![test001_min_halves.png](src/Spirals/output_images/test001_min_halves.png)
+
+### max_halves
+
+![test001_max_halves.png](src/Spirals/output_images/test001_max_halves.png)
