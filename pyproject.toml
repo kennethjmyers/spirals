@@ -12,6 +12,7 @@ dependencies = [
     "pre-commit==2.21.0",
     "pytest==7.3.1",
     "pytest-cov==4.0.0",
+    "scikit-image==0.23.2"
 ]
 
 requires-python = "== 3.12.3"
