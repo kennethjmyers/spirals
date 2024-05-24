@@ -5,6 +5,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from typing import Callable
 
+
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -64,16 +65,18 @@ def stack_pixels(arr1: np.ndarray, arr2: np.ndarray):
     return np.append(arr1, arr2).reshape(2, *arr1.shape)
 
 
-def func_apply_to_halves(arr: np.ndarray, func: Callable, preprocessing_func=stack_pixels, postprocessing_func= lambda x:x):
+def func_apply_to_halves(arr: np.ndarray, preprocessing_func=stack_pixels, func: Callable = lambda x:x, postprocessing_func= lambda x:x):
     h, w, c = arr.shape
 
     left_half_idx_end = (w//2)+1
     right_half_idx_start = -left_half_idx_end
 
     left_half = arr.copy()[:, :left_half_idx_end, :]
-    right_half = arr.copy()[:, right_half_idx_start:, :]
-    proc_arr = postprocessing_func(func(preprocessing_func(left_half, right_half)))
-    new_arr = np.append(proc_arr, proc_arr[:, ::-1, :], axis=1)
+    right_half = np.flip(arr.copy()[:, right_half_idx_start:, :], axis=1)
+    preproc_arr = preprocessing_func(left_half, right_half)
+    func_applied_arr = func(preproc_arr)
+    postproc_arr = postprocessing_func(func_applied_arr)
+    new_arr = np.append(postproc_arr, np.flip(postproc_arr[:, :, :], axis=1), axis=1)
 
     return new_arr
 
@@ -114,7 +117,12 @@ def min_of_all_channels_halves(arr: np.ndarray):
     :param arr:
     :return:
     """
-    return func_apply_to_halves(arr, func=np.min)
+    return func_apply_to_halves(
+        arr,
+        preprocessing_func=lambda x, y: np.append(x[:, :, :3], y[:, :, :3], axis=2),
+        func=lambda x: np.min(x, axis=2),
+        postprocessing_func=lambda x: np.repeat(x.reshape(*x.shape, 1), 3, axis=2)
+    )
 
 
 def max_of_all_channels_halves(arr: np.ndarray):
@@ -124,7 +132,12 @@ def max_of_all_channels_halves(arr: np.ndarray):
     :param arr:
     :return:
     """
-    return func_apply_to_halves(arr, func=lambda x: np.max(x, axis=2), preprocessing_func=lambda x,y: np.append(x, y, axis=2), postprocessing_func= lambda x: x.reshape(*x.shape,1))
+    return func_apply_to_halves(
+        arr,
+        preprocessing_func=lambda x,y: np.append(x[:, :, :3], y[:, :, :3], axis=2),
+        func=lambda x: np.max(x, axis=2),
+        postprocessing_func= lambda x: np.repeat(x.reshape(*x.shape,1), 3, axis=2)
+    )
 
 
 def min_halves(arr: np.ndarray):
@@ -152,7 +165,7 @@ if __name__=="__main__":
 
     funcs = [mirror_right_over_left, mirror_left_over_right, flip_horizontal, average_halves, average_halves_glitched,
      sum_halves, min_of_all_channels_halves, min_halves, max_of_all_channels_halves, max_halves]
-    funcs = [max_of_all_channels_halves]
+    # funcs = [max_halves]
 
     for func in funcs:
         print(f"applying function {func.__name__}")
