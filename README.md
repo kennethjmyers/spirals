@@ -1,6 +1,6 @@
 # Spirals 🌀
 
-![you_can_unswirl.png](static_images/you_can_unswirl.png)
+<img src="static_images/you_can_unswirl.png" alt="drawing" width="400"/>
 
 # Set Up
 
